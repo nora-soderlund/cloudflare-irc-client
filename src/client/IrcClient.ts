@@ -1,4 +1,3 @@
-import { IrcUrlProperties } from "../models/IrcUrlProperties";
 import { connect } from 'cloudflare:sockets';
 
 export class IrcClient {
