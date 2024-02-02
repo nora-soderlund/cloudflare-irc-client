@@ -7,10 +7,7 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		const client = new IrcClient({
-			host: "efnet.portlane.se",
-			port: 6666
-		}, false);
+		const client = new IrcClient("efnet.portlane.se", 6666, false);
 
 		await client.connect("nora");
 

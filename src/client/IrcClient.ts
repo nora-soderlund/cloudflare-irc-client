@@ -7,9 +7,8 @@ export class IrcClient {
   private writer?: WritableStreamDefaultWriter;
   private reader?: ReadableStreamDefaultReader;
 
-  constructor(urlOrUrlProperties: string | IrcUrlProperties, private readonly secure?: boolean) {
-    this.address = (typeof urlOrUrlProperties === "string")?(urlOrUrlProperties):(IrcClient.getUrlFromProperties(urlOrUrlProperties));
-    
+  constructor(host: string, port = 6667, private readonly secure?: boolean) {
+    this.address = `${host}:${port}`;
   }
 
   public async connect(nickname: string): Promise<void> {
@@ -58,19 +57,5 @@ export class IrcClient {
         this.read();
       }
     });
-  }
-
-  private static getUrlFromProperties({ host, port = 6667, channel, channelKeyword }: IrcUrlProperties) {
-    let url = `${host}:${port}`;
-
-    if(channel) {
-      url += `:${channel}`;
-
-      if(channelKeyword) {
-        url += `?${channelKeyword}`;
-      }
-    }
-
-    return url;
   }
 }
