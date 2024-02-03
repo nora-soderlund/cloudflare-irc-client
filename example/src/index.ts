@@ -1,5 +1,4 @@
-import { IrcClient } from "cloudflare-irc-client";
-import { MessageEvent } from "cloudflare-irc-client";
+import { IrcClient, MessageEvent } from "cloudflare-irc-client";
 
 export default {
 	/**
