@@ -1,3 +1,3 @@
 export * from "./client/IrcClient";
 
-export * from "./models/IrcUrlProperties";
+export * from "./interfaces/MessageEvent";

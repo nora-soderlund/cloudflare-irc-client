@@ -1,21 +1,35 @@
-import { IrcClient } from "../../src";
-
-export interface Env {
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-}
+import { IrcClient } from "cloudflare-irc-client";
+import { MessageEvent } from "cloudflare-irc-client";
 
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	/**
+	 * Connects to the IRC server with the nick 'nora' and then requests a list of all channels.
+	 */
+	async fetch(_request: Request, _env: never, context: ExecutionContext): Promise<Response> {
 		const client = new IrcClient("efnet.portlane.se", 6666, false);
 
-		await client.connect("nora");
+		// pipe the messages to the response in plain text
+    let { readable, writable } = new TransformStream();
 
-		//await client.sendMessage("LIST");
-		await client.sendMessage("JOIN #football");
+		const writer = writable.getWriter();
 
-		await new Promise((resolve) => setTimeout(resolve, 30000));
+		client.addEventListener("message", (event: Event) => {
+			if(event instanceof MessageEvent) {
+				console.debug(event.message);
 
-		return new Response('Hello World!');
+				writer.write(new TextEncoder().encode(event.message));
+			}
+		});
+
+		context.waitUntil(client.connect("nora").then(async () => {
+			//await client.sendMessage("LIST");
+			//await client.sendMessage("JOIN #football");
+
+			await client.list();
+
+			await new Promise((resolve) => setTimeout(resolve, 30000));
+		}));
+
+    return new Response(readable);
 	},
 };
